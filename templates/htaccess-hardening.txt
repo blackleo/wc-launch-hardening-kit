@@ -1,0 +1,19 @@
+# --- Add to .htaccess (Apache/LiteSpeed). For Nginx use equivalent server{} rules. ---
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+Options -Indexes
+<Files wp-config.php>
+  Require all denied
+</Files>
+<FilesMatch "^(xmlrpc\.php|readme\.html|license\.txt)$">
+  Require all denied
+</FilesMatch>
+# No PHP execution in uploads
+RewriteRule ^wp-content/uploads/.*\.(php|phtml|phar)$ - [F,L]
